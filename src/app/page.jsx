@@ -1,11 +1,16 @@
 "use client"
 
 import ProductCard from "@/component/ProductCard"
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
-import ShopFAQ from "@/component/FAQ/faq"
+import ShopFAQ from "@/component/FAQ";
+import dynamic from "next/dynamic";
 
+const HeavyComponent = dynamic(() => import("@/component/HeavyComponent"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 export default function Home() {
 
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +20,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [showPayment, setShowPayment] = useState(false);
+  const [show, setShow] = useState(false);
 
   function NavLink ({ href, isActive, children }) {
       return (
@@ -70,12 +76,13 @@ export default function Home() {
         <NavLink href="/" isActive={pathname === "/"}>Home</NavLink>
         <NavLink href="/" isActive={pathname === "/products"}>Products</NavLink>
         <NavLink href="/" isActive={pathname === "/contact"}>Contact Us</NavLink>
-        <NavLink href="/" isActive={pathname === "/login"}>Log In</NavLink>
-        <NavLink href="/" isActive={pathname === "/register"}>Sign Up</NavLink>
+        <NavLink href="/login" isActive={pathname === "/login"}>Log In</NavLink>
+        <NavLink href="/register" isActive={pathname === "/register"}>Sign Up</NavLink>
       </div>
     </div>
     </nav>
-      <h1 className="text-3xl font-bold mb-4 p-4">Product Catalog</h1>
+      <button onClick={() => setShow(true)} className="text-3xl font-bold mb-4 p-4">Product Catalog</button>
+      {show && <HeavyComponent />}
       <div className="grid grid-cols-4 p-4">
         {products.map((product) => (
         <ProductCard key={product.id} product={product}/>
